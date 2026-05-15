@@ -1,51 +1,60 @@
+import React, { Suspense, lazy } from 'react';
 import { connect  } from 'dva';
 import { Drawer, Tabs, Row, Col, Button, Spin, } from 'antd';
-import DateTime from '../components/comp/DateTime';
-import LoginForm from '../components/user/LoginForm';
-import RegisterForm from '../components/user/RegisterForm';
-import ResetPwdForm from '../components/user/ResetPwdForm';
-import ChangePwdForm from '../components/user/ChangePwdForm';
-import ChangeParamsFormComp from '../components/user/ChangeParamsFormComp';
-import ChartAddFormComp from '../components/user/ChartAddFormComp';
-import ChartEditFormComp from '../components/user/ChartEditFormComp';
-import ChartList from '../components/user/ChartList';
-import CaseAddFormComp from '../components/user/CaseAddFormComp';
-import CaseEditFormComp from '../components/user/CaseEditFormComp';
-import CaseList from '../components/user/CaseList';
-import AstroFormComp from '../components/astro/AstroFormComp';
-import AstroChartMain from '../components/astro/AstroChartMain';
-import AstroChartMain3D from '../components/astro3d/AstroChartMain3D';
-import HellenAstroMain from '../components/hellenastro/HellenAstroMain';
-import LocAstroMain from '../components/loc/LocAstroMain';
-import IndiaChartMain from '../components/astro/IndiaChartMain';
-import AstroRelative from '../components/astro/AstroRelative';
-import AstroDirectMain from '../components/direction/AstroDirectMain';
-import AspSelector from '../components/astro/AspSelector';
-import PlanetSelector from '../components/astro/PlanetSelector';
-import ChartDisplaySelector from '../components/astro/ChartDisplaySelector';
-import ChartsGps from '../components/user/ChartsGps';
-import ChartMemo from '../components/comp/ChartMemo';
-import AstroGermany from '../components/germany/AstroGermany';
-import JieQiChartsMain from '../components/jieqi/JieQiChartsMain';
-import CnTraditionMain from '../components/cntradition/CnTraditionMain';
-import CnYiBuMain from '../components/cnyibu/CnYiBuMain';
-import CalendarMain from '../components/calendar/CalendarMain';
-import OtherBuMain from '../components/otherbu/OtherBuMain';
-import FengShuiMain from '../components/fengshui/FengShuiMain';
-import SanShiUnitedMain from '../components/sanshi/SanShiUnitedMain';
-import AIAnalysisMain from '../components/aianalysis/AIAnalysisMain';
-import BookMain from '../components/reader/BookMain';
-import MediaMain from '../components/multimedia/MediaMain';
-import AdminToolsMain from '../components/admintools/AdminToolsMain';
-import GuoLaoChartMain from '../components/guolao/GuoLaoChartMain';
-import CommToolsMain from '../components/commtools/CommToolsMain';
-import DLFeature from '../components/deeplearn/DLFeature';
-import HomePageSetup from '../components/HomePageSetup';
 import * as AstroConst from '../constants/AstroConst';
 import {convertToArray} from '../utils/helper';
 
+const LoginForm = lazy(()=>import('../components/user/LoginForm'));
+const RegisterForm = lazy(()=>import('../components/user/RegisterForm'));
+const ResetPwdForm = lazy(()=>import('../components/user/ResetPwdForm'));
+const ChangePwdForm = lazy(()=>import('../components/user/ChangePwdForm'));
+const ChangeParamsFormComp = lazy(()=>import('../components/user/ChangeParamsFormComp'));
+const ChartAddFormComp = lazy(()=>import('../components/user/ChartAddFormComp'));
+const ChartEditFormComp = lazy(()=>import('../components/user/ChartEditFormComp'));
+const ChartList = lazy(()=>import('../components/user/ChartList'));
+const CaseAddFormComp = lazy(()=>import('../components/user/CaseAddFormComp'));
+const CaseEditFormComp = lazy(()=>import('../components/user/CaseEditFormComp'));
+const CaseList = lazy(()=>import('../components/user/CaseList'));
+const AstroFormComp = lazy(()=>import('../components/astro/AstroFormComp'));
+const AstroChartMain = lazy(()=>import('../components/astro/AstroChartMain'));
+const AstroChartMain3D = lazy(()=>import('../components/astro3d/AstroChartMain3D'));
+const HellenAstroMain = lazy(()=>import('../components/hellenastro/HellenAstroMain'));
+const LocAstroMain = lazy(()=>import('../components/loc/LocAstroMain'));
+const IndiaChartMain = lazy(()=>import('../components/astro/IndiaChartMain'));
+const AstroRelative = lazy(()=>import('../components/astro/AstroRelative'));
+const AstroDirectMain = lazy(()=>import('../components/direction/AstroDirectMain'));
+const AspSelector = lazy(()=>import('../components/astro/AspSelector'));
+const PlanetSelector = lazy(()=>import('../components/astro/PlanetSelector'));
+const ChartDisplaySelector = lazy(()=>import('../components/astro/ChartDisplaySelector'));
+const ChartsGps = lazy(()=>import('../components/user/ChartsGps'));
+const ChartMemo = lazy(()=>import('../components/comp/ChartMemo'));
+const AstroGermany = lazy(()=>import('../components/germany/AstroGermany'));
+const JieQiChartsMain = lazy(()=>import('../components/jieqi/JieQiChartsMain'));
+const CnTraditionMain = lazy(()=>import('../components/cntradition/CnTraditionMain'));
+const CnYiBuMain = lazy(()=>import('../components/cnyibu/CnYiBuMain'));
+const CalendarMain = lazy(()=>import('../components/calendar/CalendarMain'));
+const OtherBuMain = lazy(()=>import('../components/otherbu/OtherBuMain'));
+const FengShuiMain = lazy(()=>import('../components/fengshui/FengShuiMain'));
+const SanShiUnitedMain = lazy(()=>import('../components/sanshi/SanShiUnitedMain'));
+const AIAnalysisMain = lazy(()=>import('../components/aianalysis/AIAnalysisMain'));
+const BookMain = lazy(()=>import('../components/reader/BookMain'));
+const MediaMain = lazy(()=>import('../components/multimedia/MediaMain'));
+const AdminToolsMain = lazy(()=>import('../components/admintools/AdminToolsMain'));
+const GuoLaoChartMain = lazy(()=>import('../components/guolao/GuoLaoChartMain'));
+const CommToolsMain = lazy(()=>import('../components/commtools/CommToolsMain'));
+const DLFeature = lazy(()=>import('../components/deeplearn/DLFeature'));
+const HomePageSetup = lazy(()=>import('../components/HomePageSetup'));
+
 const TabPane = Tabs.TabPane;
 let fetchByFieldsTimer = null;
+
+function ModuleFallback(){
+    return (
+        <div style={{ padding: 24, textAlign: 'center' }}>
+            <Spin spinning size="large" tip="模块载入中..." />
+        </div>
+    );
+}
 
 function AstroIndex({dispatch, astro, app, user, rules, }){
     const { tokenImg, registerFields, loginFields, loading, loadingText, refresh, chartDisplay, aspects, planetDisplay, lotsDisplay, colorTheme, showPdBounds, showPlanetHouseInfo, showAstroMeaning, showOnlyRulExaltReception} = app;
@@ -207,6 +216,7 @@ function AstroIndex({dispatch, astro, app, user, rules, }){
 	return (
 		<div style={idxstyle}>
         <Spin spinning={loading} size="large" tip={tip}>
+            <Suspense fallback={<ModuleFallback />}>
             <Tabs 
                 defaultActiveKey="astrochart" tabPosition='left' onChange={changeTab}
                 activeKey={currentTab}
@@ -972,6 +982,7 @@ function AstroIndex({dispatch, astro, app, user, rules, }){
                     loading={loading}
                 />
             </Drawer>
+            </Suspense>
 
         </Spin>
 		</div>

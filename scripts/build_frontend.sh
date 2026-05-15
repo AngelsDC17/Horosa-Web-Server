@@ -13,9 +13,12 @@ fi
 cd "${ROOT}/astrostudyui"
 
 export HOROSA_PUBLIC_SERVER_ROOT="${HOROSA_PUBLIC_SERVER_ROOT:-/api}"
-export NODE_OPTIONS="${NODE_OPTIONS:---openssl-legacy-provider}"
+export HOROSA_PUBLIC_PATH="${HOROSA_PUBLIC_PATH:-/}"
+export HOROSA_LOW_MEMORY_BUILD="${HOROSA_LOW_MEMORY_BUILD:-1}"
+export NODE_OPTIONS="${NODE_OPTIONS:---openssl-legacy-provider --max-old-space-size=640}"
 
-npm ci
-npm run build
+npm ci --ignore-scripts --no-audit --no-fund
+node scripts/patch_quill_domnodeinserted.js
+npm run build:digitalocean
 
 echo "Frontend built at ${ROOT}/astrostudyui/dist"

@@ -13,6 +13,8 @@
 [![Memory](https://img.shields.io/badge/default%20JVM%20heap-1024MiB-d97706)](scripts/measure_server_footprint.sh)
 [![Chart Workers](https://img.shields.io/badge/chart%20workers-default%208-a855f7)](astropy/websrv/webchartsrv.py)
 
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/Horace-Maxwell/Horosa-Web-Server/tree/main)
+
 <p><strong>English:</strong> This repository isolates the Horosa web stack into a server-first project, so deployment, resource limits, reverse proxying, and production health checks can evolve without disturbing the signed desktop app.</p>
 <p><strong>中文：</strong>这个仓库把星阙网页端单独拆成服务器优先的项目，让部署、资源限制、反向代理和生产健康检查可以独立优化，不影响已经稳定的桌面 App。</p>
 
@@ -25,6 +27,7 @@
 | Use this repository when you want to run Horosa as a web service on a VPS or cloud server. | 如果你要把星阙作为网页服务部署到 VPS 或云服务器，请使用这个仓库。 |
 | The desktop app release pipeline is intentionally not part of this project. | 桌面 App 的打包、签名、公证流程刻意不放进这个项目。 |
 | Production routing is designed as `Nginx -> /api -> Java API -> Python chart service`. | 生产路由设计为 `Nginx -> /api -> Java API -> Python 图表服务`。 |
+| DigitalOcean App Platform can deploy the frontend with the included one-click static-site spec. | DigitalOcean App Platform 可以使用仓库内置的一键部署配置发布前端静态站点。 |
 
 ## What Is Included / 包含内容
 
@@ -36,6 +39,7 @@
 | `flatlib-ctrad2/` | Bundled calculation dependency used by `astropy`. | `astropy` 使用的内置计算依赖。 |
 | `scripts/` | Build, start, stop, health-check, and footprint measurement scripts. | 构建、启动、停止、健康检查与内存足迹测量脚本。 |
 | `deploy/` | Nginx, systemd, MongoDB, and Redis production templates. | Nginx、systemd、MongoDB、Redis 的生产模板。 |
+| `.do/` | DigitalOcean App Platform one-click deploy and app-spec templates. | DigitalOcean App Platform 一键部署与 app-spec 模板。 |
 
 The copy intentionally excludes local caches, `node_modules`, Java `target` folders, frontend `dist`, desktop runtime bundles, logs, and local `.env` files.
 
@@ -64,7 +68,9 @@ Measured locally after production frontend build and backend jar build:
 | Git-tracked source / Git 追踪源码体积 | 761.9 MiB, 1,815 files |
 | Frontend production dist / 前端生产产物 | 9.3 MB |
 | Backend boot jar / 后端启动 jar | 309 MB |
-| Frontend build peak RSS / 前端构建峰值 RSS | about 1.75 GB |
+| Previous frontend build peak RSS / 原前端构建峰值 RSS | about 1.75 GB |
+| Optimized App Platform build / 优化后 App Platform 构建 | passes after fresh `npm ci` at 640MB V8 heap, about 995 MiB peak RSS |
+| Largest frontend JS / 最大前端 JS | reduced from 7.6 MB to 2.5 MB |
 | Backend build peak RSS / 后端构建峰值 RSS | about 494 MB |
 | JVM default MaxHeapSize on this Mac / 本机 Java 默认最大堆 | 4096 MiB |
 | Tuned JVM MaxHeapSize / 优化后 Java 最大堆 | 1024 MiB |
@@ -139,6 +145,25 @@ Build backend and frontend:
 ./scripts/build_backend.sh
 ./scripts/build_frontend.sh
 ```
+
+## DigitalOcean App Platform / DigitalOcean 一键部署
+
+The frontend can be deployed as a DigitalOcean App Platform Static Site using the included `.do/deploy.template.yaml`. The build uses lazy-loaded workspaces and webpack vendor chunking so the full Horosa feature set remains intact while avoiding the previous single-entry build memory spike.
+
+前端可以用仓库内置的 `.do/deploy.template.yaml` 作为 DigitalOcean App Platform Static Site 一键部署。构建过程已经改成工作区按需加载和 webpack vendor 分包，星阙完整功能不删减，同时避开以前单一入口包导致的构建内存尖峰。
+
+```bash
+cd astrostudyui
+npm ci --ignore-scripts --no-audit --no-fund
+node scripts/patch_quill_domnodeinserted.js
+npm run build:digitalocean
+```
+
+Full guide:
+
+完整说明：
+
+[`docs/deployment/digitalocean-app-platform.md`](docs/deployment/digitalocean-app-platform.md)
 
 ## Run / 运行
 
