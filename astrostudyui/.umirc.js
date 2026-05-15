@@ -18,6 +18,10 @@ export default {
 	pwa: false,
 	hd: false,
 	fastClick: false,
+	define: {
+		'process.env.HOROSA_PUBLIC_SERVER_ROOT': process.env.HOROSA_PUBLIC_SERVER_ROOT || '',
+		'process.env.UMI_APP_SERVER_ROOT': process.env.UMI_APP_SERVER_ROOT || '',
+	},
 	title: '星阙 - 玄学与星座云平台',
 	chainWebpack(config) {
 		// App Platform's standard builders can be memory constrained. These

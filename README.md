@@ -149,9 +149,9 @@ Build backend and frontend:
 
 ## DigitalOcean App Platform / DigitalOcean 一键部署
 
-The frontend can be deployed as a DigitalOcean App Platform Static Site using the included `.do/deploy.template.yaml`. The build uses lazy-loaded workspaces and webpack vendor chunking so the full Horosa feature set remains intact while avoiding the previous single-entry build memory spike.
+The frontend can be deployed as a DigitalOcean App Platform Static Site using the included `.do/deploy.template.yaml`. The build uses lazy-loaded workspaces, webpack vendor chunking, and a post-build `index.html` bootstrap check so the full Horosa feature set remains intact while avoiding the previous single-entry build memory spike and blank-root deployment failure.
 
-前端可以用仓库内置的 `.do/deploy.template.yaml` 作为 DigitalOcean App Platform Static Site 一键部署。构建过程已经改成工作区按需加载和 webpack vendor 分包，星阙完整功能不删减，同时避开以前单一入口包导致的构建内存尖峰。
+前端可以用仓库内置的 `.do/deploy.template.yaml` 作为 DigitalOcean App Platform Static Site 一键部署。构建过程已经改成工作区按需加载、webpack vendor 分包，并在构建后校验和补齐 `index.html` 的启动分包引用；星阙完整功能不删减，同时避开以前单一入口包导致的构建内存尖峰和部署后白屏问题。
 
 ```bash
 cd astrostudyui
@@ -174,9 +174,9 @@ Before handing the repo to another machine or deploying on DigitalOcean, run the
 ./scripts/verify_digitalocean_frontend.sh
 ```
 
-The same preflight also runs on Ubuntu in GitHub Actions so future `main` updates fail early if the App Platform static-site build regresses.
+The same preflight also runs on Ubuntu in GitHub Actions so future `main` updates fail early if the App Platform static-site build or initial chunk bootstrap regresses.
 
-同一套验收也会在 GitHub Actions 的 Ubuntu 环境中自动运行；如果以后 `main` 改坏了 DigitalOcean 静态站点构建，会提前失败。
+同一套验收也会在 GitHub Actions 的 Ubuntu 环境中自动运行；如果以后 `main` 改坏了 DigitalOcean 静态站点构建或入口分包启动链路，会提前失败。
 
 ## Run / 运行
 

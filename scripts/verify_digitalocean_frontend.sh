@@ -42,6 +42,65 @@ if not js_files:
 print(f"verified {len(refs)} HTML asset references and {len(js_files)} JS assets")
 PY
 
+python3 - <<'PY'
+import pathlib
+import re
+import sys
+
+dist = pathlib.Path("astrostudyui/dist")
+html = (dist / "index.html").read_text(encoding="utf-8")
+entry_match = re.search(r'<script\s+src=["\']\/([^"\']*umi\.[^"\']+\.js)["\']></script>', html)
+if not entry_match:
+    print("index.html does not reference the Umi entry script", file=sys.stderr)
+    sys.exit(1)
+
+entry_name = entry_match.group(1)
+entry_source = (dist / entry_name).read_text(encoding="utf-8")
+bootstrap = re.search(r"\.push\(\[([^\]]+)\]\),a\(\)", entry_source)
+if not bootstrap:
+    print("entry script does not expose an initial chunk dependency list")
+    sys.exit(1)
+
+numbers = [int(part.strip()) for part in bootstrap.group(1).split(",") if part.strip().isdigit()]
+required_ids = []
+for chunk_id in numbers[1:]:
+    if chunk_id not in required_ids:
+        required_ids.append(chunk_id)
+
+chunk_files = {}
+for js_file in dist.glob("*.js"):
+    if js_file.name == entry_name:
+        continue
+    source = js_file.read_text(encoding="utf-8")
+    match = re.search(r"\.push\(\[\[([^\]]+)\]", source)
+    if not match:
+        continue
+    for part in match.group(1).split(","):
+        part = part.strip()
+        if part.isdigit():
+            chunk_files[int(part)] = js_file.name
+
+missing = [chunk_id for chunk_id in required_ids if chunk_id not in chunk_files]
+if missing:
+    print(f"missing initial chunk file(s) for id(s): {missing}", file=sys.stderr)
+    sys.exit(1)
+
+not_in_html = [
+    chunk_files[chunk_id]
+    for chunk_id in required_ids
+    if f'src="/{chunk_files[chunk_id]}"' not in html
+]
+if not_in_html:
+    print(
+        "index.html does not include required initial chunk script(s): "
+        + ", ".join(not_in_html),
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+print(f"verified {len(required_ids)} initial webpack chunk scripts are included in index.html")
+PY
+
 python3 -m http.server "${PORT}" --directory "${DIST}" >/tmp/horosa-digitalocean-frontend-http.log 2>&1 &
 SERVER_PID="$!"
 trap 'kill "${SERVER_PID}" >/dev/null 2>&1 || true' EXIT

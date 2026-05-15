@@ -39,6 +39,7 @@ The App Platform build path now changes the shape of the frontend without removi
 |---|---|
 | `React.lazy` for top-level workspaces | Heavy modules are compiled into async chunks instead of one giant entry bundle. |
 | Low-memory webpack cache groups | React, Ant Design, 3D, media, and export dependencies are isolated into stable vendor chunks. |
+| Post-build initial chunk injection | `index.html` is patched and verified so the entry bundle receives every required initial vendor chunk before React starts. |
 | `build:digitalocean` script | App Platform gets the same build command every time, with the required OpenSSL and heap flags. |
 | `/api` production default | Static frontend can call the backend through an App Platform route, Nginx route, or external API gateway. |
 | `/` frontend public path | App Platform can serve hashed JS/CSS directly from the static-site root. |
@@ -70,7 +71,7 @@ For the full local preflight, use:
 ./scripts/verify_digitalocean_frontend.sh
 ```
 
-That script runs the App Platform-compatible build, verifies that `index.html` references real assets, starts a static server, and checks that the entry JS/CSS plus at least one async vendor chunk return `200 OK`.
+That script runs the App Platform-compatible build, verifies that `index.html` references real assets, confirms every required initial webpack chunk is present in the HTML bootstrap, starts a static server, and checks that the entry JS/CSS plus at least one async vendor chunk return `200 OK`.
 
 The latest local verification result is:
 
@@ -83,6 +84,7 @@ The latest local verification result is:
 | Full command peak RSS | about 995 MiB, including dependency install. |
 | 640MB build time | about 19-22s for webpack build; about 35s including fresh `npm ci` on the local Mac. |
 | Linux App Platform simulation | Passes from a fresh GitHub clone in `node:20-bookworm` with a 2GB container memory limit. |
+| Static browser render smoke | Passes: `#root` renders the Horosa shell instead of staying empty after the initial vendor chunks load. |
 | Largest JS after split | `umi.*.js`, 2.5 MB / 605 KB gzip |
 | Previous largest JS before split | `umi.*.js`, 7.6 MB / about 2.0 MB gzip |
 

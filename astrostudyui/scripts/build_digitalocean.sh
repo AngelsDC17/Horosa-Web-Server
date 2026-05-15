@@ -14,3 +14,4 @@ else
 fi
 
 umi build
+node scripts/inject_initial_chunks.js
