@@ -70,6 +70,7 @@ Measured locally after production frontend build and backend jar build:
 | Backend boot jar / 后端启动 jar | 309 MB |
 | Previous frontend build peak RSS / 原前端构建峰值 RSS | about 1.75 GB |
 | Optimized App Platform build / 优化后 App Platform 构建 | passes after fresh `npm ci` at 640MB V8 heap, about 995 MiB peak RSS |
+| Linux App Platform simulation / Linux App Platform 模拟 | passes from a fresh GitHub clone in `node:20-bookworm` with 2GB container memory |
 | Largest frontend JS / 最大前端 JS | reduced from 7.6 MB to 2.5 MB |
 | Backend build peak RSS / 后端构建峰值 RSS | about 494 MB |
 | JVM default MaxHeapSize on this Mac / 本机 Java 默认最大堆 | 4096 MiB |
@@ -172,6 +173,10 @@ Before handing the repo to another machine or deploying on DigitalOcean, run the
 ```bash
 ./scripts/verify_digitalocean_frontend.sh
 ```
+
+The same preflight also runs on Ubuntu in GitHub Actions so future `main` updates fail early if the App Platform static-site build regresses.
+
+同一套验收也会在 GitHub Actions 的 Ubuntu 环境中自动运行；如果以后 `main` 改坏了 DigitalOcean 静态站点构建，会提前失败。
 
 ## Run / 运行
 

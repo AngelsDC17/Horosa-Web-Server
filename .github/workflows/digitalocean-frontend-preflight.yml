@@ -1,0 +1,32 @@
+name: DigitalOcean Frontend Preflight
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  frontend-static-site:
+    name: Build and smoke-test App Platform frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HOROSA_LOW_MEMORY_BUILD: "1"
+      HOROSA_PUBLIC_SERVER_ROOT: /api
+      HOROSA_PUBLIC_PATH: /
+      NODE_OPTIONS: --openssl-legacy-provider --max-old-space-size=640
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: astrostudyui/package-lock.json
+
+      - name: Run DigitalOcean frontend preflight
+        run: ./scripts/verify_digitalocean_frontend.sh

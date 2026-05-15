@@ -10,6 +10,10 @@
 		"local-first",
 		"umi"
 	],
+	"engines": {
+		"node": "20.x",
+		"npm": "10.x"
+	},
 	"scripts": {
 		"start": "export NODE_OPTIONS=--openssl-legacy-provider && umi dev",
 		"build": "export NODE_OPTIONS=--openssl-legacy-provider && umi build",

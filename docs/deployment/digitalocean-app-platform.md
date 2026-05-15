@@ -27,6 +27,8 @@ Use these values if you create the app manually:
 
 `catchall_document: index.html` is required because Horosa is a single-page React/Umi app. Without it, direct deep links can 404 on App Platform.
 
+The frontend package pins the App Platform buildpack to Node.js 20 and npm 10 through `astrostudyui/package.json` `engines`. This avoids surprising builder drift to a newer Node/npm pair while preserving the same command shown above.
+
 ## Why This Fixes the Build OOM
 
 The old frontend was one large entry graph: `src/pages/index.js` imported the astrology workspace, 3D charting, multimedia, AI export, user drawers, admin tools, and every traditional-discipline module at startup. On memory-constrained builders this can push webpack/V8 into the `Ineffective mark-compacts near heap limit` failure.
@@ -80,10 +82,13 @@ The latest local verification result is:
 | Full App Platform-style command | `npm ci --ignore-scripts --no-audit --no-fund && node scripts/patch_quill_domnodeinserted.js && npm run build:digitalocean` passes. |
 | Full command peak RSS | about 995 MiB, including dependency install. |
 | 640MB build time | about 19-22s for webpack build; about 35s including fresh `npm ci` on the local Mac. |
+| Linux App Platform simulation | Passes from a fresh GitHub clone in `node:20-bookworm` with a 2GB container memory limit. |
 | Largest JS after split | `umi.*.js`, 2.5 MB / 605 KB gzip |
 | Previous largest JS before split | `umi.*.js`, 7.6 MB / about 2.0 MB gzip |
 
 The default DigitalOcean build heap is therefore intentionally set to 640MB: it is safely above the previously failing App Platform heap range, while still preventing Node from claiming an unnecessarily large heap inside a small build container.
+
+GitHub Actions also runs this preflight on Ubuntu through `.github/workflows/digitalocean-frontend-preflight.yml`, so future pushes should fail early if the static-site build regresses.
 
 ## Backend Deployment Shape
 
