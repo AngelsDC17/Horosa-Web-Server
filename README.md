@@ -165,6 +165,14 @@ Full guide:
 
 [`docs/deployment/digitalocean-app-platform.md`](docs/deployment/digitalocean-app-platform.md)
 
+Before handing the repo to another machine or deploying on DigitalOcean, run the same frontend deployment verification locally:
+
+在把仓库交给别人或部署到 DigitalOcean 前，可以先跑同一套前端部署验收：
+
+```bash
+./scripts/verify_digitalocean_frontend.sh
+```
+
 ## Run / 运行
 
 Start services:

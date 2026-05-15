@@ -36,3 +36,8 @@ runtime/
 data/
 mongo-data/
 redis-data/
+
+# Small frontend seed datasets are required for clean App Platform builds.
+!astrostudyui/src/data/
+!astrostudyui/src/data/deeplearn/
+!astrostudyui/src/data/deeplearn/*.json

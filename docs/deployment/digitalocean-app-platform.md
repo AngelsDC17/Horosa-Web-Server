@@ -62,6 +62,14 @@ du -sh dist
 
 Expected result: the build succeeds under a constrained heap and produces multiple async JavaScript chunks instead of a single huge `umi.*.js`.
 
+For the full local preflight, use:
+
+```bash
+./scripts/verify_digitalocean_frontend.sh
+```
+
+That script runs the App Platform-compatible build, verifies that `index.html` references real assets, starts a static server, and checks that the entry JS/CSS plus at least one async vendor chunk return `200 OK`.
+
 The latest local verification result is:
 
 | Check | Result |
