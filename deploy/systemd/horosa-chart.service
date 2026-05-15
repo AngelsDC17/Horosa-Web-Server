@@ -1,0 +1,15 @@
+[Unit]
+Description=Horosa Python Chart Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/horosa-web
+EnvironmentFile=/opt/horosa-web/.env
+ExecStart=/opt/horosa-web/scripts/start_chart_service.sh
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

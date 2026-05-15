@@ -1,0 +1,16 @@
+[Unit]
+Description=Horosa Java API Service
+After=network.target horosa-chart.service
+Requires=horosa-chart.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/horosa-web
+EnvironmentFile=/opt/horosa-web/.env
+ExecStart=/opt/horosa-web/scripts/start_api_service.sh
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,37 @@
+.DS_Store
+
+# Frontend dependencies and build outputs
+astrostudyui/node_modules/
+astrostudyui/dist/
+astrostudyui/dist-file/
+astrostudyui/.umi/
+astrostudyui/.umi-production/
+astrostudyui/.tmp*/
+astrostudyui/*.log
+
+# Java build outputs
+**/target/
+
+# Python caches and virtualenvs
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local runtime/cache/log state
+.horosa-cache/
+.horosa-local-logs/
+logs/
+pids/
+tmp/
+runtime/
+
+# Secrets and server-specific env
+.env
+.env.*
+!.env.example
+
+# Database files should not be committed
+data/
+mongo-data/
+redis-data/
