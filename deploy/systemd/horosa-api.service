@@ -11,6 +11,10 @@ ExecStart=/opt/horosa-web/scripts/start_api_service.sh
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
+LimitNOFILE=65535
+MemoryAccounting=true
+MemoryHigh=1536M
+MemoryMax=2048M
 
 [Install]
 WantedBy=multi-user.target

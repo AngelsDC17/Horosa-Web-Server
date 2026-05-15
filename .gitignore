@@ -21,6 +21,7 @@ venv/
 # Local runtime/cache/log state
 .horosa-cache/
 .horosa-local-logs/
+${env:HOME}/
 logs/
 pids/
 tmp/

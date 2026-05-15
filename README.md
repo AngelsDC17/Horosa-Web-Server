@@ -94,6 +94,12 @@ Health check:
 ./scripts/healthcheck.sh
 ```
 
+Measure the local deployment footprint:
+
+```bash
+./scripts/measure_server_footprint.sh
+```
+
 ## Nginx
 
 Use `deploy/nginx/horosa-web.conf` as a starting point. The intended public routing is:
@@ -125,6 +131,12 @@ wiredTigerCacheSizeGB: 0.5
 ```
 
 For Redis, use `deploy/redis/redis.conf` and keep `maxmemory` bounded.
+
+The server edition also ships systemd unit templates with `MemoryAccounting`,
+`MemoryHigh`, and `MemoryMax` enabled. The defaults are intentionally
+conservative: Java API is capped at 2GB by systemd and 1GB by JVM heap unless
+`.env` raises it; the Python chart service is capped at 768MB and defaults to 8
+CherryPy worker threads instead of the historical fixed 30-thread pool.
 
 ## Notes
 

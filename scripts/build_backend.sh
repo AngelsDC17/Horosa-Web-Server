@@ -24,9 +24,9 @@ for module in "${modules[@]}"; do
   if [ -f "${SRV}/${module}/pom.xml" ]; then
     echo "==> Building ${module}"
     if [ "${module}" = "astrostudyboot" ]; then
-      (cd "${SRV}/${module}" && mvn -DskipTests package)
+      (cd "${SRV}/${module}" && mvn -B -ntp -DskipTests package)
     else
-      (cd "${SRV}/${module}" && mvn -DskipTests install)
+      (cd "${SRV}/${module}" && mvn -B -ntp -DskipTests install)
     fi
   fi
 done

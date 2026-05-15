@@ -21,9 +21,9 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.util.Arrays;
+import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
-import org.web3j.protocol.websocket.WebSocketClient;
 
 import boundless.function.Consumer3;
 import boundless.io.FileUtility;
@@ -32,6 +32,7 @@ import boundless.log.QueueLog;
 import boundless.security.SecurityUtility;
 import boundless.spring.help.PropertyPlaceholder;
 import boundless.types.OutParameter;
+import boundless.types.storage.CloudStorageFactory;
 import boundless.types.storage.ICloudStorage;
 import boundless.utility.ConvertUtility;
 import boundless.utility.JsonUtility;
@@ -261,7 +262,15 @@ public class XunFeiHelper {
 	
 	public static String ttsToUrl(String text, int pitch, int speed, int volume, String aue) {
 		byte[] raw = tts(text, pitch, speed, volume, aue);
-		ICloudStorage storage = StorageHelper.getGPTStorage();
+		ICloudStorage storage = null;
+		try {
+			storage = CloudStorageFactory.getStorage("gpt");
+		}catch(Exception e) {
+			throw new IllegalStateException("Cloud storage factory 'gpt' is not configured.", e);
+		}
+		if(storage == null) {
+			throw new IllegalStateException("Cloud storage factory 'gpt' is not configured.");
+		}
 		String key = String.format("gpt/%s.mp3", StringUtility.getUUID());
 		String url = storage.upload(raw, key);
 		return url;
