@@ -13,8 +13,8 @@ RestartSec=3
 NoNewPrivileges=true
 LimitNOFILE=65535
 MemoryAccounting=true
-MemoryHigh=1536M
-MemoryMax=2048M
+MemoryHigh=2048M
+MemoryMax=3072M
 
 [Install]
 WantedBy=multi-user.target

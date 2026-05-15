@@ -217,13 +217,14 @@ def CORS():
 
 
 if __name__ == '__main__':
-    try:
-        t0 = time.perf_counter()
-        warm_chart = PerChart(dict(WebChartSrv.PD_WARMUP_SAMPLE))
-        warm_chart.getPredict().getPrimaryDirection()
-        print('pd warmup ready in {0:.3f}s'.format(time.perf_counter() - t0))
-    except Exception:
-        traceback.print_exc()
+    if os.environ.get('HOROSA_ENABLE_PD_WARMUP', '0') == '1':
+        try:
+            t0 = time.perf_counter()
+            warm_chart = PerChart(dict(WebChartSrv.PD_WARMUP_SAMPLE))
+            warm_chart.getPredict().getPrimaryDirection()
+            print('pd warmup ready in {0:.3f}s'.format(time.perf_counter() - t0))
+        except Exception:
+            traceback.print_exc()
 
     chart_port = int(os.environ.get('HOROSA_CHART_PORT', '8899'))
     chart_host = os.environ.get('HOROSA_CHART_HOST', '127.0.0.1')

@@ -294,6 +294,10 @@ class PerPredict:
         )
 
     def _astroappEphemerisFlags(self):
+        try:
+            swe.ensurePath()
+        except Exception:
+            pass
         flags = swe.SEDEFAULT_FLAG
         if getattr(self.perchart, 'zodiacal', const.TROPICAL) == const.SIDEREAL:
             flags = flags | swisseph.FLG_SIDEREAL
@@ -310,7 +314,10 @@ class PerPredict:
         if joblib is None or not ASTROAPP_PD_ASC_CASE_CORR_MODEL.exists():
             return None
         try:
-            _ASTROAPP_PD_ASC_CASE_CORR_MODEL_CACHE = joblib.load(ASTROAPP_PD_ASC_CASE_CORR_MODEL)
+            _ASTROAPP_PD_ASC_CASE_CORR_MODEL_CACHE = joblib.load(
+                ASTROAPP_PD_ASC_CASE_CORR_MODEL,
+                mmap_mode='r',
+            )
         except Exception:
             _ASTROAPP_PD_ASC_CASE_CORR_MODEL_CACHE = None
         return _ASTROAPP_PD_ASC_CASE_CORR_MODEL_CACHE
@@ -333,7 +340,10 @@ class PerPredict:
         if not path.exists():
             return None
         try:
-            _ASTROAPP_PD_VIRTUAL_BODY_CORR_MODEL_CACHE[base_id] = joblib.load(path)
+            _ASTROAPP_PD_VIRTUAL_BODY_CORR_MODEL_CACHE[base_id] = joblib.load(
+                path,
+                mmap_mode='r',
+            )
         except Exception:
             _ASTROAPP_PD_VIRTUAL_BODY_CORR_MODEL_CACHE[base_id] = None
         return _ASTROAPP_PD_VIRTUAL_BODY_CORR_MODEL_CACHE.get(base_id)

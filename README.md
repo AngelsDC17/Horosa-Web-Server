@@ -112,7 +112,7 @@ Typical production values:
 ```bash
 HOROSA_DOMAIN=your-domain.com
 HOROSA_PUBLIC_SERVER_ROOT=/api
-HOROSA_JAVA_XMX=1024m
+HOROSA_JAVA_XMX=1536m
 HOROSA_CHART_THREAD_POOL=8
 ```
 
@@ -225,20 +225,30 @@ For a 4GB server:
 ```bash
 HOROSA_JAVA_XMX=768m
 HOROSA_CHART_THREAD_POOL=4
+HOROSA_CHART_MEMORY_HIGH=1024M
+HOROSA_CHART_MEMORY_MAX=1536M
 ```
 
-For an 8GB server:
+Recommended DigitalOcean 4c/8GB delivery server:
 
-8GB 服务器：
+推荐的 DigitalOcean 4 核 8GB 交付服务器：
 
 ```bash
 HOROSA_JAVA_XMX=1536m
 HOROSA_CHART_THREAD_POOL=8
+HOROSA_CHART_MEMORY_HIGH=1536M
+HOROSA_CHART_MEMORY_MAX=2560M
+HOROSA_API_MEMORY_HIGH=2048M
+HOROSA_API_MEMORY_MAX=3072M
 ```
 
-The systemd templates enable `MemoryAccounting`, `MemoryHigh`, and `MemoryMax`. By default, Java is capped at 2GB by systemd and 1GB by JVM heap; the Python chart service is capped at 768MB and defaults to 8 CherryPy workers instead of the historical fixed 30-worker pool.
+The DigitalOcean Basic `s-4vcpu-8gb` size is USD 48/month, about USD 0.07143/hour. That keeps a short real deployment test inexpensive while leaving enough memory for first-hit primary-direction model loading, chart rendering, MongoDB, Redis, Java, and Nginx together.
 
-systemd 模板已经启用 `MemoryAccounting`、`MemoryHigh` 和 `MemoryMax`。默认情况下，Java 被 systemd 限制在 2GB、JVM 堆限制在 1GB；Python 图表服务限制在 768MB，并从历史固定 30 线程改成默认 8 个 CherryPy worker。
+DigitalOcean Basic `s-4vcpu-8gb` 规格为 USD 48/月，约 USD 0.07143/小时。短时间真实部署测试成本很低，同时能给主限法模型首次加载、排盘渲染、MongoDB、Redis、Java 和 Nginx 留出足够余量。
+
+The systemd templates enable `MemoryAccounting`, `MemoryHigh`, and `MemoryMax`. The 8GB profile caps Java at 3GB by systemd with a 1536MB JVM heap, and caps the Python chart service at 2560MB with a 1536MB soft throttle point. This avoids the previous low-memory `512M` chart-service throttle that could make primary-direction requests time out during model cold start.
+
+systemd 模板已经启用 `MemoryAccounting`、`MemoryHigh` 和 `MemoryMax`。8GB 配置中，Java 的 systemd 上限为 3GB、JVM 堆为 1536MB；Python 图表服务硬上限为 2560MB、软节流点为 1536MB。这样可以避开此前低内存测试档 `512M` 图表服务节流导致主限法模型冷启动超时的问题。
 
 ## Maintainer Notes / 维护说明
 

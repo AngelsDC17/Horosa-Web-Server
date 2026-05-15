@@ -142,6 +142,12 @@ def setPath(path):
         SEACTIVE_JPL_FILE = jpl_file
 
 
+def ensurePath():
+    """Re-apply the active Swiss Ephemeris path before runtime calculations."""
+    if SEACTIVE_PATH:
+        swisseph.set_ephe_path(SEACTIVE_PATH)
+
+
 def getRuntimeConfig():
     return {
         'path': SEACTIVE_PATH,
@@ -155,6 +161,7 @@ def getRuntimeConfig():
 
 def sweObject(obj, jd, flags=SEDEFAULT_FLAG):
     """ Returns an object from the Ephemeris. """
+    ensurePath()
     sweObj = SWE_OBJECTS[obj]
     swisseph.set_sid_mode(SEDEFAULT_SIDM__MODE)
     sweList = swisseph.calc_ut(jd, sweObj, flags)[0]
@@ -176,6 +183,7 @@ def sweObject(obj, jd, flags=SEDEFAULT_FLAG):
     
 def sweObjectLon(obj, jd, flags=SEDEFAULT_FLAG):
     """ Returns the longitude of an object. """
+    ensurePath()
     sweObj = SWE_OBJECTS[obj]
     swisseph.set_sid_mode(SEDEFAULT_SIDM__MODE)
     sweList = swisseph.calc_ut(jd, sweObj, flags)[0]
@@ -187,6 +195,7 @@ def sweNextTransit(obj, jd, lat, lon, flag):
     an object. The flag should be 'RISE' or 'SET'. 
     
     """
+    ensurePath()
     sweObj = SWE_OBJECTS[obj]
     flag = swisseph.CALC_RISE if flag == 'RISE' else swisseph.CALC_SET
     trans = swisseph.rise_trans(jd, sweObj, lon, lat, 0, 0, 0, flag)
@@ -198,6 +207,7 @@ def sweNextTransit(obj, jd, lat, lon, flag):
         
 def sweHouses(jd, lat, lon, hsys, flag=0):
     """ Returns lists of houses and angles. """
+    ensurePath()
     hlist = None
     ascmc = None
     swhsys = SWE_HOUSESYS[hsys]
@@ -242,6 +252,7 @@ def sweHouses(jd, lat, lon, hsys, flag=0):
     
 def sweHousesLon(jd, lat, lon, hsys, flag=0):
     """ Returns lists with house and angle longitudes. """
+    ensurePath()
     hlist = None
     ascmc = None
     hsys = SWE_HOUSESYS[hsys]
@@ -270,6 +281,7 @@ def sweHousesLon(jd, lat, lon, hsys, flag=0):
 
 def sweFixedStar(star, jd, flags=SEDEFAULT_FLAG):
     """ Returns a fixed star from the Ephemeris. """
+    ensurePath()
     swisseph.set_sid_mode(SEDEFAULT_SIDM__MODE)
     sweList = swisseph.fixstar_ut(star, jd, flags)[0]
     mag = swisseph.fixstar_mag(star)
@@ -293,6 +305,7 @@ def sweFixedStar(star, jd, flags=SEDEFAULT_FLAG):
 
 def sweFixedStarSu28(star, jd, flags=SEDEFAULT_FLAG):
     """ Returns a fixed star from the Ephemeris. """
+    ensurePath()
     swisseph.set_sid_mode(SEDEFAULT_SIDM__MODE)
     sweList = swisseph.fixstar_ut(star, jd, flags)[0]
     mag = swisseph.fixstar_mag(star)
@@ -320,6 +333,7 @@ def sweFixedStarSu28(star, jd, flags=SEDEFAULT_FLAG):
 def solarEclipseGlobal(jd, backward):
     """ Returns the jd details of previous or next global solar eclipse. """
 
+    ensurePath()
     sweList = swisseph.sol_eclipse_when_glob(jd, backward=backward)
     return {
         'maximum': sweList[1][0],
@@ -334,6 +348,7 @@ def solarEclipseGlobal(jd, backward):
 def lunarEclipseGlobal(jd, backward):
     """ Returns the jd details of previous or next global lunar eclipse. """
 
+    ensurePath()
     sweList = swisseph.lun_eclipse_when(jd, backward=backward)
     return {
         'maximum': sweList[1][0],
